@@ -19,8 +19,13 @@ license that can be found in the LICENSE file.
 
       var CHART_BUFFER = 25;
 
+      var convertData = function(data) {
+        return [new Date(data[0]), data[1]];
+      }
+
+
       var createGraph = function(graph, newData) {
-        graph.data = [[new Date(), newData]];
+        graph.data = newData;
         graph.chartDiv = document.getElementById(graph.chartName);
         graph.chart = new Dygraph(graph.chartDiv, graph.data, 
                                   { drawPoints: true, axisLabelFontSize: 12 });
@@ -40,11 +45,17 @@ license that can be found in the LICENSE file.
         socket.on('message', function(message) {
           if (message.type === 'data') {
             if (graphs[message.graphId].data !== undefined) {
-              graphs[message.graphId].data.push([new Date(), message.data]);
-              graphs[message.graphId].chart.updateOptions( { 'file': graphs[message.graphId].data });
+              graphs[message.graphId].data.push(convertData(message.data));
+              graphs[message.graphId].chart.updateOptions({ 'file': graphs[message.graphId].data });
             } else {
-              createGraph(graphs[message.graphId], message.data);
+              createGraph(graphs[message.graphId], [convertData(message.data)]);
             }
+          } else if (message.type === 'initialize_graph') {
+              var data = new Array();
+              for (var i = 0; i < message.data.length; i++) {
+                 data.push(convertData(message.data[i]));
+              }
+              createGraph(graphs[message.graphId], data);
           }
         });
       };
