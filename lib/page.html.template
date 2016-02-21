@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<!--
+Copyright 2015 the project authors as listed in the AUTHORS file.
+All rights reserved. Use of this source code is governed by the
+license that can be found in the LICENSE file.
+-->
+
+<html>
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.1/dygraph-combined.js"></script>
+    <title><DASHBOARD_TITLE></title>
+  </head>
+
+  <body>
+    <script>
+<GRAPHS>
+
+      var CHART_BUFFER = 25;
+
+      var createGraph = function(graph, newData) {
+        graph.data = [[new Date(), newData]];
+        graph.chartDiv = document.getElementById(graph.chartName);
+        graph.chart = new Dygraph(graph.chartDiv, graph.data, 
+                                  { drawPoints: true, axisLabelFontSize: 12 });
+        resizeGraph(graph);
+      } 
+
+      var resizeGraph = function(graph) {
+        var innerWidth = window.innerWidth;
+        var innerHeight = window.innerHeight;
+        if (graph !== undefined) {
+          graph.chart.resize(innerWidth - CHART_BUFFER, (innerHeight - CHART_BUFFER)/graphs.length);
+        }
+      }
+
+      window.onload = function() {
+        var socket = new io.connect('<URL_TYPE>://' + window.location.host);
+        socket.on('message', function(message) {
+          if (message.type === 'data') {
+            if (graphs[message.graphId].data !== undefined) {
+              graphs[message.graphId].data.push([new Date(), message.data]);
+              graphs[message.graphId].chart.updateOptions( { 'file': graphs[message.graphId].data });
+            } else {
+              createGraph(graphs[message.graphId], message.data);
+            }
+          }
+        });
+      };
+
+      window.addEventListener('resize', function() {
+        for (var i = 0; i < graphs.length; i++ ) {
+          resizeGraph(graphs[i]);      
+        }
+      });
+
+    </script>
+    <table width="100%">
+<GRAPHS_HTML>
+    </table>
+  </body>
+</html>

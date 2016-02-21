@@ -1,0 +1,10 @@
+{
+  "title": "House Temp Data",
+  "serverPort": 3000,
+  "useLaunchWindow": "true",
+  "mqttServerUrl": "tcp://X.X.X.X:1883",
+  "graphEntries": [ { "name": "Indoor Temp", "topic": "house/nexxtech/temp"}, 
+                    { "name": "Bdr Light", "topic": "house/arduinoLightSensor/40"}
+                  ]
+}
+
