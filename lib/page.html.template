@@ -19,6 +19,8 @@ license that can be found in the LICENSE file.
 
       var CHART_BUFFER = 25;
 
+<COMMON_FUNCTIONS>
+
       var convertData = function(data) {
         return [new Date(data[0]), data[1]];
       }
@@ -35,7 +37,7 @@ license that can be found in the LICENSE file.
       var resizeGraph = function(graph) {
         var innerWidth = window.innerWidth;
         var innerHeight = window.innerHeight;
-        if (graph !== undefined) {
+        if ((graph !== undefined) && (graph.chart !== undefined)) {
           graph.chart.resize(innerWidth - CHART_BUFFER, (innerHeight - CHART_BUFFER)/graphs.length);
         }
       }
@@ -44,11 +46,13 @@ license that can be found in the LICENSE file.
         var socket = new io.connect('<URL_TYPE>://' + window.location.host);
         socket.on('message', function(message) {
           if (message.type === 'data') {
-            if (graphs[message.graphId].data !== undefined) {
-              graphs[message.graphId].data.push(convertData(message.data));
-              graphs[message.graphId].chart.updateOptions({ 'file': graphs[message.graphId].data });
+            var graphId = message.graphId;
+            if (graphs[graphId].data !== undefined) {
+              trimData(graphs[graphId].retentionSeconds, graphs[graphId].data, new Date(message.data[0]));
+              graphs[graphId].data.push(convertData(message.data));
+              graphs[graphId].chart.updateOptions({ 'file': graphs[graphId].data });
             } else {
-              createGraph(graphs[message.graphId], [convertData(message.data)]);
+              createGraph(graphs[graphId], [convertData(message.data)]);
             }
           } else if (message.type === 'initialize_graph') {
               var data = new Array();
