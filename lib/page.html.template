@@ -17,7 +17,7 @@ license that can be found in the LICENSE file.
     <script>
 <GRAPHS>
 
-      var CHART_BUFFER = 25;
+      var CHART_BUFFER = 30;
 
 <COMMON_FUNCTIONS>
 
@@ -30,7 +30,16 @@ license that can be found in the LICENSE file.
         graph.data = newData;
         graph.chartDiv = document.getElementById(graph.chartName);
         graph.chart = new Dygraph(graph.chartDiv, graph.data, 
-                                  { drawPoints: true, axisLabelFontSize: 12 });
+                                  { drawPoints: true,
+                                    axisLabelFontSize: graph.yPixelsPerLabel - 2,
+                                    yLabelWidth: 16,
+                                    ylabel: graph.name,
+                                    axes: {
+                                      y: {
+                                         pixelsPerLabel: graph.yPixelsPerLabel
+                                      }
+                                    }
+                                  });
         resizeGraph(graph);
       } 
 
