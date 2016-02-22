@@ -79,7 +79,7 @@ then run:
 npm start
 </PRE>
 
-from the directory in the micro-app-graph-dashboard was installed.
+from the directory in which the micro-app-graph-dashboard was installed.
 
 Once the server is started. Point your browser at the host/port for the server
 (or now use the micro-app-electron-launcher). 
